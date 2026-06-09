@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DC OpEx Support — Ownership Discussion</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --hub: #EE4D2D;
+    --hub-light: #FFF0ED;
+    --hub-mid: #F47C63;
+    --soc: #0A8A72;
+    --soc-light: #E6F5F2;
+    --soc-mid: #3DB39E;
+    --shared: #6B4EBB;
+    --shared-light: #F0EDFA;
+    --shared-mid: #9B82D4;
+    --unset: #6B6863;
+    --unset-light: #F5F4F1;
+    --others: #B45309;
+    --others-light: #FEF3C7;
+    --others-mid: #D97706;
+    --border: #E0DDD8;
+    --text: #1A1512;
+    --subtext: #6B6863;
+    --white: #FFFFFF;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Roboto', system-ui, -apple-system, sans-serif;
+    background: #FFF8F6;
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--text);
+    color: var(--white);
+    padding: 24px 28px 20px;
+    border-bottom: 3px solid var(--hub);
+  }
+  .header-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--hub-mid);
+    margin-bottom: 7px;
+  }
+  .header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 5px;
+  }
+  .header-sub {
+    font-size: 12.5px;
+    color: #AAA8A3;
+    line-height: 1.5;
+  }
+  .change-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(10,138,114,0.15);
+    border: 1px solid rgba(10,138,114,0.35);
+    color: var(--soc-mid);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 3px;
+    margin-top: 10px;
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar-wrap {
+    background: var(--white);
+    padding: 12px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .progress-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--subtext);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: var(--unset-light);
+    border-radius: 99px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--hub), var(--shared), var(--soc));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-count {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--text);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .reset-btn {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--subtext);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .reset-btn:hover { background: var(--unset-light); color: var(--text); }
+
+  /* FILTER TABS */
+  .tabs {
+    display: flex;
+    gap: 2px;
+    padding: 12px 28px 0;
+    background: var(--white);
+    border-bottom: 2px solid var(--border);
+    overflow-x: auto;
+  }
+  .tab {
+    padding: 7px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--subtext);
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--hub); border-bottom-color: var(--hub); }
+
+  /* MAIN */
+  .main { padding: 20px 28px 40px; }
+
+  .note-banner {
+    background: #FFF5F3;
+    border: 1px solid #F5B8AD;
+    border-left: 3px solid #EE4D2D;
+    border-radius: 4px;
+    padding: 11px 14px;
+    font-size: 12px;
+    color: #7A2010;
+    margin-bottom: 22px;
+    line-height: 1.65;
+  }
+  .note-banner strong { font-weight: 700; }
+
+  /* CATEGORY */
+  .category { margin-bottom: 26px; }
+  .category-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .category-icon {
+    width: 30px; height: 30px;
+    border-radius: 6px;
+    background: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .category-title {
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--subtext);
+  }
+  .category-count {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--subtext);
+    font-weight: 600;
+  }
+
+  /* CARD */
+  .cards { display: flex; flex-direction: column; gap: 6px; }
+
+  .card {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-left: 3.5px solid #D0CDC8;
+    border-radius: 6px;
+    padding: 12px 14px;
+    transition: box-shadow 0.15s;
+  }
+  .card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .card.assigned-hub { border-left-color: var(--hub); }
+  .card.assigned-soc { border-left-color: var(--soc); }
+  .card.assigned-shared { border-left-color: var(--shared); }
+  .card.assigned-others { border-left-color: var(--others); }
+  .card.hidden { display: none; }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 9px;
+  }
+  .card-title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+    line-height: 1.3;
+  }
+  .card-flag {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 2px 7px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    align-self: flex-start;
+  }
+  .flag-new { background: #E8F7F0; color: var(--shared); border: 1px solid var(--shared-mid); }
+
+  /* DISCUSSION PROMPT */
+  .card-prompt {
+    font-size: 11.5px;
+    color: var(--subtext);
+    line-height: 1.6;
+    margin-bottom: 11px;
+    padding: 8px 10px;
+    background: #FFF8F6;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    font-style: italic;
+  }
+  .card-prompt::before {
+    content: "💬 ";
+    font-style: normal;
+  }
+
+  /* OWNERSHIP SELECTOR */
+  .ownership-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .own-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--subtext);
+    margin-right: 2px;
+    flex-shrink: 0;
+  }
+  .own-btn {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 4px 12px;
+    border-radius: 4px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    color: var(--subtext);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .own-btn:hover { border-color: #AAA; color: var(--text); }
+  .own-btn.selected-hub { background: var(--hub-light); border-color: var(--hub); color: var(--hub); }
+  .own-btn.selected-soc { background: var(--soc-light); border-color: var(--soc); color: var(--soc); }
+  .own-btn.selected-shared { background: var(--shared-light); border-color: var(--shared); color: var(--shared); }
+  .own-btn.selected-others { background: var(--others-light); border-color: var(--others); color: var(--others); }
+
+  /* REMARKS FIELD (Others) */
+  .remarks-field {
+    margin-top: 7px;
+    width: 100%;
+    font-size: 12px;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--others-light);
+    border: 1.5px solid var(--others-mid);
+    border-radius: 4px;
+    padding: 7px 10px;
+    resize: vertical;
+    min-height: 44px;
+    display: none;
+  }
+  .remarks-field:focus { outline: none; border-color: var(--others); }
+  .remarks-field.visible { display: block; }
+
+  /* NOTES FIELD */
+  .notes-toggle {
+    font-size: 11px;
+    color: var(--subtext);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    margin-left: auto;
+    text-decoration: underline dotted;
+    flex-shrink: 0;
+  }
+  .notes-toggle:hover { color: var(--text); }
+  .notes-field {
+    margin-top: 8px;
+    width: 100%;
+    font-size: 12px;
+    font-family: inherit;
+    color: var(--text);
+    background: #FFFDF8;
+    border: 1px solid #E8D48A;
+    border-radius: 4px;
+    padding: 7px 10px;
+    resize: vertical;
+    min-height: 56px;
+    display: none;
+  }
+  .notes-field:focus { outline: none; border-color: #C4A41A; }
+  .notes-field.visible { display: block; }
+
+  /* SUMMARY SECTION */
+  .summary-section {
+    margin-top: 30px;
+    padding-top: 22px;
+    border-top: 2px solid var(--border);
+  }
+  .summary-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--subtext);
+    margin-bottom: 14px;
+  }
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .summary-card {
+    padding: 14px;
+    border-radius: 7px;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+  }
+  .summary-card-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+    color: var(--subtext);
+  }
+  .summary-card-team {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .summary-list {
+    font-size: 11.5px;
+    color: var(--subtext);
+    line-height: 1.8;
+    min-height: 20px;
+  }
+  .summary-list .empty-msg {
+    font-style: italic;
+    color: #BBBBBB;
+    font-size: 11px;
+  }
+  .summary-card.s-hub { border-top: 3px solid var(--hub); }
+  .summary-card.s-soc { border-top: 3px solid var(--soc); }
+  .summary-card.s-shared { border-top: 3px solid var(--shared); }
+  .summary-card.s-others { border-top: 3px solid var(--others); }
+  .summary-card.s-hub .summary-card-team { color: var(--hub); }
+  .summary-card.s-soc .summary-card-team { color: var(--soc); }
+  .summary-card.s-shared .summary-card-team { color: var(--shared); }
+  .summary-card.s-others .summary-card-team { color: var(--others); }
+
+  /* ADD ITEM */
+  .add-item-row {
+    margin-top: 4px;
+  }
+  .add-item-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    color: var(--subtext);
+    background: none;
+    border: 1.5px dashed var(--border);
+    border-radius: 6px;
+    padding: 9px 14px;
+    width: 100%;
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.01em;
+  }
+  .add-item-btn:hover { border-color: var(--hub); color: var(--hub); background: var(--hub-light); }
+  .add-item-btn .plus { font-size: 16px; font-weight: 400; line-height: 1; }
+
+  .add-item-form {
+    background: var(--white);
+    border: 1.5px solid var(--hub);
+    border-left: 3.5px solid var(--hub);
+    border-radius: 6px;
+    padding: 12px 14px;
+    display: none;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .add-item-form.open { display: flex; }
+  .add-item-form input[type="text"] {
+    font-size: 13px;
+    font-family: inherit;
+    font-weight: 600;
+    color: var(--text);
+    background: #FAFAF8;
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    padding: 7px 10px;
+    width: 100%;
+  }
+  .add-item-form input[type="text"]:focus { outline: none; border-color: var(--hub); }
+  .add-item-form textarea {
+    font-size: 12px;
+    font-family: inherit;
+    color: var(--subtext);
+    background: #FFF8F6;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 7px 10px;
+    width: 100%;
+    resize: vertical;
+    min-height: 52px;
+  }
+  .add-item-form textarea:focus { outline: none; border-color: var(--hub); }
+  .add-item-form-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .add-item-save {
+    font-size: 12px;
+    font-weight: 700;
+    font-family: inherit;
+    background: var(--hub);
+    color: var(--white);
+    border: none;
+    border-radius: 4px;
+    padding: 6px 16px;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .add-item-save:hover { opacity: 0.85; }
+  .add-item-cancel {
+    font-size: 12px;
+    font-weight: 600;
+    font-family: inherit;
+    background: none;
+    color: var(--subtext);
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .add-item-cancel:hover { border-color: #AAA; color: var(--text); }
+  .card.custom-card { border-left-color: #D0CDC8; }
+  .card-custom-badge {
+    font-size: 10px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.06em; padding: 2px 7px; border-radius: 3px;
+    background: #F0F0F0; color: #888; border: 1px solid #DDD;
+    flex-shrink: 0; align-self: flex-start;
+  }
+
+  @media (max-width: 600px) {
+    .main, .header, .tabs, .progress-bar-wrap { padding-left: 14px; padding-right: 14px; }
+    .summary-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-eyebrow">Operational Excellence · Support Ownership</div>
+  <h1>DC Management — OpEx Support Discussion</h1>
+  <div class="header-sub">Use this to guide leadership alignment on who owns each area after the DC reporting change.</div>
+  <div class="change-badge">⟶ DC Management now reports to SOC OpEx</div>
+</div>
+
+<div class="progress-bar-wrap">
+  <span class="progress-label">Progress</span>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <span class="progress-count" id="progressCount">0 of <span id="totalCount">0</span> assigned</span>
+  <button class="reset-btn" onclick="resetAll()">Reset All</button>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="filterCards('all', this)">All Items</button>
+  <button class="tab" onclick="filterCards('unassigned', this)">⬤ Unassigned</button>
+  <button class="tab" onclick="filterCards('hub', this)">RC OpEx</button>
+  <button class="tab" onclick="filterCards('soc', this)">SOC OpEx</button>
+  <button class="tab" onclick="filterCards('shared', this)">Shared</button>
+  <button class="tab" onclick="filterCards('others', this)">Others</button>
+  <button class="tab" onclick="filterCards('trucking', this)">🚛 Trucking</button>
+  <button class="tab" onclick="filterCards('new', this)">✦ Suggested Additions</button>
+</div>
+
+<div class="main">
+
+  <div class="note-banner">
+    <strong>How to use:</strong> Each item has a discussion prompt — key questions to help the group decide. Select an owner for each item (<strong>RC OpEx</strong>, <strong>SOC OpEx</strong>, <strong>Shared</strong>, or <strong>Others</strong>) as the team reaches alignment. Selecting <strong>Others</strong> reveals a remarks field to specify the team or conditions. Use the notes field to capture additional context. Items marked <strong>✦ Added</strong> are suggested areas not in the original list.
+  </div>
+
+  <!-- PEOPLE -->
+  <div class="category">
+    <div class="category-header">
+      <div class="category-icon">👥</div>
+      <div class="category-title">People</div>
+      <span class="category-count" id="count-people"></span>
+    </div>
+    <div class="cards" id="group-people">
+
+      <div class="card" data-group="people" data-owner="">
+        <div class="card-top"><div class="card-title">Org Structure & Rationalization</div></div>
+        <div class="card-prompt">Does org design for DC sit with whoever DC reports to, or does RC OpEx retain a stake given operational interdependencies? Who approves headcount changes?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="people" data-owner="">
+        <div class="card-top"><div class="card-title">Agency Management</div></div>
+        <div class="card-prompt">Who manages third-party agency contracts, SLAs, and compliance for DC manpower? Should this be standardized with whoever manages agency relationships at SOC or Hub?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="people" data-owner="">
+        <div class="card-top"><div class="card-title">Workforce Management</div></div>
+        <div class="card-prompt">Who owns headcount planning, attendance tracking, and labor allocation for DC? Should DC workforce data roll up to SOC or remain within a RC OpEx reporting structure?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="people" data-owner="">
+        <div class="card-top"><div class="card-title">Shift Planning</div></div>
+        <div class="card-prompt">DC shift timing affects both Hub inbound/outbound schedules and SOC sortation windows. Who has final authority on DC shift design — and who needs to be consulted?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="people" data-owner="">
+        <div class="card-top"><div class="card-title">Performance Management</div></div>
+        <div class="card-prompt">Who sets the KPI framework, conducts performance reviews, and handles disciplinary actions for DC staff? Should DC performance standards mirror SOC OpEx or RC OpEx benchmarks?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="people" data-owner="" data-new="true">
+        <div class="card-top"><div class="card-title">Training & Onboarding</div><span class="card-flag flag-new">✦ Added</span></div>
+        <div class="card-prompt">Who designs and delivers onboarding and SOP training for new DC hires? Should training materials be standardized with SOC OpEx or RC OpEx, or developed separately for DC?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="people" data-owner="" data-new="true">
+        <div class="card-top"><div class="card-title">Labor Compliance & Safety</div><span class="card-flag flag-new">✦ Added</span></div>
+        <div class="card-prompt">Who is accountable for labor law compliance, PPE standards, and incident reporting at the DC? Should this align to SOC OpEx safety frameworks or existing RC OpEx protocols?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="add-item-row">
+        <button class="add-item-btn" onclick="openAddForm(this)">
+          <span class="plus">+</span> Add item to this section
+        </button>
+        <div class="add-item-form">
+          <input type="text" placeholder="Item title…" />
+          <textarea placeholder="Discussion prompt or context (optional)…"></textarea>
+          <div class="add-item-form-actions">
+            <button class="add-item-save" onclick="saveItem(this)">Add</button>
+            <button class="add-item-cancel" onclick="cancelAdd(this)">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- OPERATIONS -->
+  <div class="category">
+    <div class="category-header">
+      <div class="category-icon">⚙️</div>
+      <div class="category-title">Operations</div>
+      <span class="category-count" id="count-operations"></span>
+    </div>
+    <div class="cards" id="group-operations">
+
+      <div class="card" data-group="operations" data-owner="">
+        <div class="card-top"><div class="card-title">Work Instructions (SOPs)</div></div>
+        <div class="card-prompt">Who owns authoring, versioning, and enforcing DC work instructions? Should DC SOPs be brought in line with SOC's or maintained separately given operational differences?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="operations" data-owner="">
+        <div class="card-top"><div class="card-title">Productivity Monitoring & Targets</div></div>
+        <div class="card-prompt">Who sets productivity targets for DC? RC OpEx cares about throughput that feeds RC flows; SOC cares about DC's internal efficiency. Should one team own metrics, or both?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="operations" data-owner="">
+        <div class="card-top"><div class="card-title">Feature Activation (System / Tech)</div></div>
+        <div class="card-prompt">When new system features are rolled out to the DC, who approves activation? If a feature affects RC OpEx-facing DC processes, does RC OpEx get sign-off authority?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="operations" data-owner="" data-new="true">
+        <div class="card-top"><div class="card-title">Process Audits & Quality Control</div><span class="card-flag flag-new">✦ Added</span></div>
+        <div class="card-prompt">Who conducts regular audits of DC operations — parcel accuracy, sortation quality, SOP adherence? Should audit standards be set by SOC, RC OpEx, or a central OpEx function?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="operations" data-owner="" data-new="true">
+        <div class="card-top"><div class="card-title">SLA & KPI Governance</div><span class="card-flag flag-new">✦ Added</span></div>
+        <div class="card-prompt">Who defines and owns the DC's service level agreements? Internal DC metrics vs. handoff SLAs between DC and Hub may have different owners — how should this be split?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="operations" data-owner="" data-new="true">
+        <div class="card-top"><div class="card-title">Hub–DC Coordination & Handoff Protocols</div><span class="card-flag flag-new">✦ Added</span></div>
+        <div class="card-prompt">Who owns the daily coordination between RC and DC — truck schedules, parcel manifests, inbound/outbound timing? Does RC OpEx retain this regardless of where DC reports?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="operations" data-owner="">
+        <div class="card-top"><div class="card-title">Expansion — New / Split / Transfer</div></div>
+        <div class="card-prompt">Who leads planning and preparation for DC expansions, splits, or transfers? Should PMO own the project execution while RC OpEx / SOC OpEx own the operational readiness — or is this fully centralized under one team?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="operations" data-owner="">
+        <div class="card-top"><div class="card-title">Cache Management</div></div>
+        <div class="card-prompt">Who owns cache management at the DC — policies, monitoring, and day-to-day execution? Is this an Ops or OpEx function, and should it sit with RC OpEx, SOC OpEx, or be jointly governed given it touches both teams?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="operations" data-owner="">
+        <div class="card-top"><div class="card-title">FM Scope & SOP: VIP Sellers / Direct Pickups / SCOM</div></div>
+        <div class="card-prompt">Who defines and enforces the First Mile scope and SOPs covering VIP sellers, direct pickups, and SCOM flows? Should RC OpEx own the FM-facing processes while SOC OpEx governs DC-side execution, or is one team the single owner?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="operations" data-owner="">
+        <div class="card-top"><div class="card-title">RC System Routes (New RC, Daily Changes, Crossdock, Pre-sorting)</div></div>
+        <div class="card-prompt">Who owns RC system route management — creating new RC routes, handling daily route changes, crossdock assignments, and pre-sorting configurations? Is this an Ops systems function, an OpEx function, or does it require joint ownership between RC OpEx and SOC OpEx?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="add-item-row">
+        <button class="add-item-btn" onclick="openAddForm(this)">
+          <span class="plus">+</span> Add item to this section
+        </button>
+        <div class="add-item-form">
+          <input type="text" placeholder="Item title…" />
+          <textarea placeholder="Discussion prompt or context (optional)…"></textarea>
+          <div class="add-item-form-actions">
+            <button class="add-item-save" onclick="saveItem(this)">Add</button>
+            <button class="add-item-cancel" onclick="cancelAdd(this)">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SITE, FACILITIES & UTILITIES -->
+  <div class="category">
+    <div class="category-header">
+      <div class="category-icon">🏗️</div>
+      <div class="category-title">Site, Facilities & Utilities</div>
+      <span class="category-count" id="count-site"></span>
+    </div>
+    <div class="cards" id="group-site">
+
+      <div class="card" data-group="site" data-owner="">
+        <div class="card-top"><div class="card-title">Parking Management</div></div>
+        <div class="card-prompt">Who manages parking allocation for DC staff and delivery vehicles? Is this a site management question (follows reporting line) or does it depend on who owns the physical space?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="site" data-owner="">
+        <div class="card-top"><div class="card-title">Building & Structural Maintenance</div></div>
+        <div class="card-prompt">Who is responsible for facility inspections, structural repairs, and civil maintenance at the DC site? Does this follow the lease holder, the reporting line, or a central facilities team?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="site" data-owner="">
+        <div class="card-top"><div class="card-title">Lease / Rental Billing</div></div>
+        <div class="card-prompt">Who holds the DC cost center and manages lease billing? Has the reporting change triggered a cost center migration from RC OpEx to SOC? Is Finance involved in this decision?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="site" data-owner="">
+        <div class="card-top"><div class="card-title">Utilities (Water, Internet, Electricity)</div></div>
+        <div class="card-prompt">Who manages utility contracts, monitors consumption, and handles billing for the DC? If the DC shares a compound with Hub, how are costs split and who is the primary contact?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="site" data-owner="">
+        <div class="card-top"><div class="card-title">GenSet / Drum Card — BCP</div></div>
+        <div class="card-prompt">Who owns generator readiness, fuel management, and BCP activation for the DC? Should DC BCP protocols be integrated into SOC OpEx's BCP framework or maintained independently?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="site" data-owner="">
+        <div class="card-top"><div class="card-title">Housekeeping & Sanitation</div></div>
+        <div class="card-prompt">Who manages housekeeping contractors and sanitation standards at the DC? Is this bundled with other facilities functions, and does it stay with the same team that manages the building?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="site" data-owner="" data-new="true">
+        <div class="card-top"><div class="card-title">Security & Access Control</div><span class="card-flag flag-new">✦ Added</span></div>
+        <div class="card-prompt">Who manages guards, CCTV, and access badges at the DC? If RC and DC share a compound, is security managed jointly? Should access policies be standardized with SOC?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="site" data-owner="" data-new="true">
+        <div class="card-top"><div class="card-title">Fire Safety & Emergency Response</div><span class="card-flag flag-new">✦ Added</span></div>
+        <div class="card-prompt">Who is accountable for fire drills, FDAS maintenance, and emergency evacuation plans at the DC? Should this be harmonized with SOC OpEx emergency protocols?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="add-item-row">
+        <button class="add-item-btn" onclick="openAddForm(this)">
+          <span class="plus">+</span> Add item to this section
+        </button>
+        <div class="add-item-form">
+          <input type="text" placeholder="Item title…" />
+          <textarea placeholder="Discussion prompt or context (optional)…"></textarea>
+          <div class="add-item-form-actions">
+            <button class="add-item-save" onclick="saveItem(this)">Add</button>
+            <button class="add-item-cancel" onclick="cancelAdd(this)">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- INVENTORY & ASSETS -->
+  <div class="category">
+    <div class="category-header">
+      <div class="category-icon">📦</div>
+      <div class="category-title">Inventory & Assets</div>
+      <span class="category-count" id="count-assets"></span>
+    </div>
+    <div class="cards" id="group-assets">
+
+      <div class="card" data-group="assets" data-owner="">
+        <div class="card-top"><div class="card-title">Pallet Mesh & Crates</div></div>
+        <div class="card-prompt">Who tracks, replenishes, and maintains DC storage containers? Are these assets shared with Hub or SOC, and does that affect who manages inventory levels?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="assets" data-owner="">
+        <div class="card-top"><div class="card-title">Conveyor System</div></div>
+        <div class="card-prompt">Who owns conveyor uptime, maintenance scheduling, and downtime escalation? Is there an Engineering or Tech team involved, and how is accountability split between operational and technical ownership?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="assets" data-owner="">
+        <div class="card-top"><div class="card-title">AWB Printers</div></div>
+        <div class="card-prompt">Who manages AWB printer provisioning, label stock, and first-line troubleshooting at the DC? Should this align with how RC OpEx or SOC manages the same equipment at their sites?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="assets" data-owner="">
+        <div class="card-top"><div class="card-title">PDA Scanners & Wired Scanners</div></div>
+        <div class="card-prompt">Who handles scanner issuance, charging, repair, and replacement at the DC? Is there a central IT or asset team involved, or is this fully managed by the site's operational team?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="assets" data-owner="">
+        <div class="card-top"><div class="card-title">Laptops</div></div>
+        <div class="card-prompt">Who procures, images, and replaces DC laptops — the site's operational team, a central IT function, or is this inherited from whoever previously managed it under RC OpEx?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="assets" data-owner="">
+        <div class="card-top"><div class="card-title">Printers (Desktop / Label)</div></div>
+        <div class="card-prompt">Who manages general-purpose printers at the DC, including consumables and maintenance? Is this bundled with scanner/device management or handled separately?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="assets" data-owner="">
+        <div class="card-top"><div class="card-title">Sack Seals & Truck Seals</div></div>
+        <div class="card-prompt">Who controls seal inventory, issuance, and reconciliation? Given chain-of-custody implications, should this sit with the team that owns the last-mile dispatch process or the DC operations team?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="assets" data-owner="">
+        <div class="card-top"><div class="card-title">Sacks (Mailbags)</div></div>
+        <div class="card-prompt">Who manages sack inventory — issuance, retrieval, repair, and reorder? Are sacks shared across RC and DC, and does that complicate single-team ownership?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="assets" data-owner="" data-new="true">
+        <div class="card-top"><div class="card-title">Asset Register & Disposal</div><span class="card-flag flag-new">✦ Added</span></div>
+        <div class="card-prompt">Who maintains the DC asset register — tagging, tracking depreciation, and managing disposal? Should this be integrated into SOC's asset management system or maintained as a standalone DC register?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="assets" data-owner="" data-new="true">
+        <div class="card-top"><div class="card-title">Forklifts & Material Handling Equipment (MHE)</div><span class="card-flag flag-new">✦ Added</span></div>
+        <div class="card-prompt">If the DC uses forklifts or pallet jacks, who owns maintenance schedules, operator certification, and daily safety checks? Does this follow the site's facilities owner or operations owner?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="add-item-row">
+        <button class="add-item-btn" onclick="openAddForm(this)">
+          <span class="plus">+</span> Add item to this section
+        </button>
+        <div class="add-item-form">
+          <input type="text" placeholder="Item title…" />
+          <textarea placeholder="Discussion prompt or context (optional)…"></textarea>
+          <div class="add-item-form-actions">
+            <button class="add-item-save" onclick="saveItem(this)">Add</button>
+            <button class="add-item-cancel" onclick="cancelAdd(this)">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TRUCKING & LINE-HAUL -->
+  <div class="category">
+    <div class="category-header">
+      <div class="category-icon">🚛</div>
+      <div class="category-title">Trucking & Line-Haul</div>
+      <span class="category-count" id="count-trucking"></span>
+    </div>
+    <div class="cards" id="group-trucking">
+
+      <div class="card" data-group="trucking" data-owner="">
+        <div class="card-top"><div class="card-title">Trucks & Line-Haul Vehicles (Fleet)</div></div>
+        <div class="card-prompt">Who owns the DC's line-haul fleet — scheduling, dispatch, and overall fleet management? Even with DC under SOC OpEx, does RC OpEx retain ownership since they originate Hub-to-DC movements?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="trucking" data-owner="">
+        <div class="card-top"><div class="card-title">Clustering & Route Optimization</div></div>
+        <div class="card-prompt">Who owns zone clustering and route design for DC line-haul? Is this a network planning function (central team), or should the team managing daily operations own it? How are route changes approved?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="trucking" data-owner="">
+        <div class="card-top"><div class="card-title">Speed & Cost Optimization</div></div>
+        <div class="card-prompt">Who is accountable for balancing transit speed vs. trucking cost for DC movements? Should this sit with the team that owns the P&L for DC logistics, or is it a shared target between RC OpEx and SOC OpEx?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="trucking" data-owner="">
+        <div class="card-top"><div class="card-title">Policy Building (Trucking)</div></div>
+        <div class="card-prompt">Who authors and enforces trucking policies — loading rules, transit SOPs, driver conduct, cargo security standards? Should DC trucking policies be standardized with SOC OpEx or RC OpEx frameworks?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="trucking" data-owner="">
+        <div class="card-top"><div class="card-title">Trucker & Helper Hiring</div></div>
+        <div class="card-prompt">Who manages recruitment, onboarding, and accreditation of truckers and helpers for DC line-haul? Is this handled by the same team that manages agency labor, or does trucking have a separate hiring process?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="trucking" data-owner="">
+        <div class="card-top"><div class="card-title">Truck & Parking Maintenance</div></div>
+        <div class="card-prompt">Who schedules and tracks preventive maintenance for DC trucks, and ensures parking areas are safe and operational? Is this the same team that owns the fleet, or a facilities function?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="trucking" data-owner="">
+        <div class="card-top"><div class="card-title">Parking Facility Management</div></div>
+        <div class="card-prompt">Who manages the truck parking facility — bay allocation, access control, expansion planning? If the parking facility is shared with the DC site, does it fall under Site & Facilities or Trucking ownership?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="trucking" data-owner="">
+        <div class="card-top"><div class="card-title">Agency Management (Trucking)</div></div>
+        <div class="card-prompt">Who manages third-party trucking agencies — contracts, performance, compliance, and headcount? Should this be consolidated with DC agency management or handled separately given trucking-specific SLAs and operational dynamics?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="trucking" data-owner="">
+        <div class="card-top"><div class="card-title">RC Billing (Trucking Ops)</div></div>
+        <div class="card-prompt">Who owns billing reconciliation for trucking operations at the RC level — validating invoices, disputing discrepancies, and approving payments to trucking agencies? Should this sit with Ops, OpEx, or Finance, and which team — RC OpEx or SOC OpEx — holds accountability?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="trucking" data-owner="">
+        <div class="card-top"><div class="card-title">BCP Handling for Trucks</div></div>
+        <div class="card-prompt">Who owns the trucking BCP — backup vehicle sourcing, alternative routing, and escalation protocols when primary fleet is unavailable? Should this be part of the DC BCP or managed as a standalone trucking continuity plan?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="trucking" data-owner="" data-new="true">
+        <div class="card-top"><div class="card-title">Fuel Management</div><span class="card-flag flag-new">✦ Added</span></div>
+        <div class="card-prompt">Who manages fuel sourcing, consumption tracking, and reimbursement for DC line-haul trucks? Should fuel costs sit in the trucking budget or the DC site operating budget?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="trucking" data-owner="" data-new="true">
+        <div class="card-top"><div class="card-title">Truck Accreditation & Compliance</div><span class="card-flag flag-new">✦ Added</span></div>
+        <div class="card-prompt">Who ensures trucks meet regulatory requirements — LTO registration, permits, insurance, and load compliance? Is this owned by the fleet manager or a separate compliance function?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="trucking" data-owner="" data-new="true">
+        <div class="card-top"><div class="card-title">Trucker Performance Monitoring</div><span class="card-flag flag-new">✦ Added</span></div>
+        <div class="card-prompt">Who tracks trucker KPIs — on-time departure/arrival, cargo integrity, incident rates? Should this be managed by the team that handles trucking operations, or the team that owns overall DC performance?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="trucking" data-owner="" data-new="true">
+        <div class="card-top"><div class="card-title">Load Planning & Manifest Management</div><span class="card-flag flag-new">✦ Added</span></div>
+        <div class="card-prompt">Who is responsible for truck load planning and ensuring manifests are accurate before dispatch? Does this sit with the DC operations team, the trucking team, or is it a shared handoff process?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="card" data-group="trucking" data-owner="" data-new="true">
+        <div class="card-top"><div class="card-title">GPS & Fleet Tracking</div><span class="card-flag flag-new">✦ Added</span></div>
+        <div class="card-prompt">Who manages GPS device installation, monitoring dashboards, and incident alerts for DC trucks? Is this a tech/IT function, or should the team owning fleet operations manage it end-to-end?</div>
+        <div class="ownership-row">
+          <span class="own-label">Owner:</span>
+          <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+          <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+          <button class="own-btn" onclick="assign(this,'others')">Others</button>
+          <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+        </div>
+        <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+        <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>
+      </div>
+
+      <div class="add-item-row">
+        <button class="add-item-btn" onclick="openAddForm(this)">
+          <span class="plus">+</span> Add item to this section
+        </button>
+        <div class="add-item-form">
+          <input type="text" placeholder="Item title…" />
+          <textarea placeholder="Discussion prompt or context (optional)…"></textarea>
+          <div class="add-item-form-actions">
+            <button class="add-item-save" onclick="saveItem(this)">Add</button>
+            <button class="add-item-cancel" onclick="cancelAdd(this)">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- LIVE SUMMARY -->
+  <div class="summary-section">
+    <div class="summary-title">Live Summary — Decisions So Far</div>
+    <div class="summary-grid">
+      <div class="summary-card s-hub">
+        <div class="summary-card-label">Assigned to</div>
+        <div class="summary-card-team">RC OpEx</div>
+        <div class="summary-list" id="summary-hub"><span class="empty-msg">Nothing assigned yet</span></div>
+      </div>
+      <div class="summary-card s-soc">
+        <div class="summary-card-label">Assigned to</div>
+        <div class="summary-card-team">SOC OpEx</div>
+        <div class="summary-list" id="summary-soc"><span class="empty-msg">Nothing assigned yet</span></div>
+      </div>
+      <div class="summary-card s-shared">
+        <div class="summary-card-label">Assigned to</div>
+        <div class="summary-card-team">Shared / Joint</div>
+        <div class="summary-list" id="summary-shared"><span class="empty-msg">Nothing assigned yet</span></div>
+      </div>
+      <div class="summary-card s-others">
+        <div class="summary-card-label">Assigned to</div>
+        <div class="summary-card-team">Others</div>
+        <div class="summary-list" id="summary-others"><span class="empty-msg">Nothing assigned yet</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top:18px;display:flex;gap:10px;flex-wrap:wrap;">
+      <button onclick="exportCSV()" style="display:flex;align-items:center;gap:8px;font-family:inherit;font-size:13px;font-weight:700;background:#EE4D2D;color:#fff;border:none;border-radius:6px;padding:11px 20px;cursor:pointer;transition:opacity 0.15s;" onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+        ⬇ Export to CSV
+      </button>
+      <button onclick="exportCSV(true)" style="display:flex;align-items:center;gap:8px;font-family:inherit;font-size:13px;font-weight:700;background:#fff;color:#EE4D2D;border:2px solid #EE4D2D;border-radius:6px;padding:11px 20px;cursor:pointer;transition:opacity 0.15s;" onmouseover="this.style.opacity='.75'" onmouseout="this.style.opacity='1'">
+        ⬇ Unassigned Only
+      </button>
+    </div>
+    <div style="font-size:11px;color:#AAA;margin-top:8px;line-height:1.5;">
+      Opens a <strong>.csv</strong> file you can import directly into Google Sheets via <em>File → Import</em>.
+    </div>
+  </div>
+
+</div>
+
+<script>
+document.getElementById('totalCount').textContent = document.querySelectorAll('.card').length;
+
+/* ── ADD ITEM ── */
+function openAddForm(btn) {
+  const row = btn.closest('.add-item-row');
+  btn.style.display = 'none';
+  row.querySelector('.add-item-form').classList.add('open');
+  row.querySelector('input[type="text"]').focus();
+}
+
+function cancelAdd(btn) {
+  const row = btn.closest('.add-item-row');
+  const form = row.querySelector('.add-item-form');
+  form.classList.remove('open');
+  form.querySelector('input[type="text"]').value = '';
+  form.querySelector('textarea').value = '';
+  row.querySelector('.add-item-btn').style.display = '';
+}
+
+function saveItem(btn) {
+  const form = btn.closest('.add-item-form');
+  const row = form.closest('.add-item-row');
+  const cardsDiv = row.closest('.cards');
+  const group = cardsDiv.id.replace('group-', '');
+  const titleVal = form.querySelector('input[type="text"]').value.trim();
+  if (!titleVal) { form.querySelector('input[type="text"]').focus(); return; }
+  const promptVal = form.querySelector('textarea').value.trim();
+
+  const card = document.createElement('div');
+  card.className = 'card custom-card';
+  card.setAttribute('data-group', group);
+  card.setAttribute('data-owner', '');
+  card.innerHTML = `
+    <div class="card-top">
+      <div class="card-title">${escHtml(titleVal)}</div>
+      <span class="card-custom-badge">Custom</span>
+      <button onclick="removeCard(this)" style="margin-left:auto;font-size:13px;font-weight:700;color:#999;background:#F5F4F1;border:1.5px solid #E0DDD8;border-radius:4px;cursor:pointer;padding:3px 9px;flex-shrink:0;line-height:1;" title="Remove this item">✕</button>
+    </div>
+    ${promptVal ? `<div class="card-prompt">${escHtml(promptVal)}</div>` : ''}
+    <div class="ownership-row">
+      <span class="own-label">Owner:</span>
+      <button class="own-btn" onclick="assign(this,'hub')">RC OpEx</button>
+      <button class="own-btn" onclick="assign(this,'soc')">SOC OpEx</button>
+      <button class="own-btn" onclick="assign(this,'shared')">Shared</button>
+      <button class="own-btn" onclick="assign(this,'others')">Others</button>
+      <button class="notes-toggle" onclick="toggleNotes(this)">+ notes</button>
+    </div>
+    <textarea class="remarks-field" placeholder="Specify team / department / remarks…"></textarea>
+    <textarea class="notes-field" placeholder="Capture decision notes, conditions, or follow-up actions…"></textarea>`;
+
+  cardsDiv.insertBefore(card, row);
+  cancelAdd(btn);
+  updateAll();
+}
+
+function removeCard(btn) {
+  const card = btn.closest('.card');
+  if (!card) return;
+  if (!confirm('Remove "' + (card.querySelector('.card-title') ? card.querySelector('.card-title').textContent.trim() : 'this item') + '"?')) return;
+  card.remove();
+  updateAll();
+}
+
+function escHtml(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+
+function assign(btn, owner) {
+  const card = btn.closest('.card');
+  const row = btn.closest('.ownership-row');
+  const prev = card.getAttribute('data-owner');
+  const remarksField = card.querySelector('.remarks-field');
+
+  // Toggle off
+  if (prev === owner) {
+    card.setAttribute('data-owner', '');
+    card.classList.remove('assigned-hub','assigned-soc','assigned-shared','assigned-others');
+    row.querySelectorAll('.own-btn').forEach(b => b.classList.remove('selected-hub','selected-soc','selected-shared','selected-others'));
+    if (remarksField) { remarksField.classList.remove('visible'); remarksField.value = ''; }
+    updateAll();
+    return;
+  }
+
+  card.setAttribute('data-owner', owner);
+  card.classList.remove('assigned-hub','assigned-soc','assigned-shared','assigned-others');
+  card.classList.add('assigned-' + owner);
+  row.querySelectorAll('.own-btn').forEach(b => b.classList.remove('selected-hub','selected-soc','selected-shared','selected-others'));
+  btn.classList.add('selected-' + owner);
+
+  // Show/hide remarks field for Others
+  if (remarksField) {
+    if (owner === 'others') {
+      remarksField.classList.add('visible');
+      remarksField.focus();
+    } else {
+      remarksField.classList.remove('visible');
+    }
+  }
+  updateAll();
+}
+
+function toggleNotes(btn) {
+  const field = btn.closest('.card').querySelector('.notes-field');
+  field.classList.toggle('visible');
+  btn.textContent = field.classList.contains('visible') ? '− notes' : '+ notes';
+  if (field.classList.contains('visible')) field.focus();
+}
+
+function updateAll() {
+  const cards = document.querySelectorAll('.card');
+  const total = cards.length;
+  let assigned = 0;
+  const lists = { hub: [], soc: [], shared: [], others: [] };
+
+  cards.forEach(card => {
+    const owner = card.getAttribute('data-owner');
+    const titleEl = card.querySelector('.card-title');
+    const title = titleEl ? titleEl.textContent.trim() : '';
+    if (owner && lists[owner] !== undefined) {
+      assigned++;
+      const remarksField = card.querySelector('.remarks-field');
+      const remark = (owner === 'others' && remarksField && remarksField.value.trim())
+        ? ` <span style="color:#92400e;font-style:italic">(${remarksField.value.trim()})</span>` : '';
+      lists[owner].push(title + remark);
+    }
+  });
+
+  // Progress
+  const pct = total > 0 ? (assigned / total) * 100 : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressCount').innerHTML = assigned + ' of <span id="totalCount">' + total + '</span> assigned';
+
+  // Summaries
+  ['hub','soc','shared','others'].forEach(k => {
+    const el = document.getElementById('summary-' + k);
+    if (!el) return;
+    if (lists[k].length === 0) {
+      el.innerHTML = '<span class="empty-msg">Nothing assigned yet</span>';
+    } else {
+      el.innerHTML = lists[k].map(t => `<div style="padding:1px 0">· ${t}</div>`).join('');
+    }
+  });
+
+  // Category counts
+  ['people','operations','site','assets','trucking'].forEach(updateGroupCount);
+
+  // Re-apply filter
+  const activeTab = document.querySelector('.tab.active');
+  if (activeTab) {
+    const filter = activeTab.getAttribute('data-filter');
+    if (filter) applyFilter(filter);
+  }
+}
+
+function updateGroupCount(group) {
+  const cards = document.querySelectorAll(`[data-group="${group}"]`);
+  const done = [...cards].filter(c => c.getAttribute('data-owner')).length;
+  const el = document.getElementById('count-' + group);
+  if (el) el.textContent = done + ' / ' + cards.length + ' assigned';
+}
+
+function filterCards(type, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  btn.setAttribute('data-filter', type);
+  applyFilter(type);
+}
+
+function applyFilter(type) {
+  document.querySelectorAll('.card').forEach(card => {
+    const owner = card.getAttribute('data-owner') || '';
+    const isNew = card.getAttribute('data-new') === 'true';
+    const group = card.getAttribute('data-group') || '';
+    if (type === 'all') {
+      card.classList.remove('hidden');
+    } else if (type === 'unassigned') {
+      card.classList.toggle('hidden', owner !== '');
+    } else if (type === 'new') {
+      card.classList.toggle('hidden', !isNew);
+    } else if (type === 'trucking') {
+      card.classList.toggle('hidden', group !== 'trucking');
+    } else {
+      card.classList.toggle('hidden', owner !== type);
+    }
+  });
+}
+
+function resetAll() {
+  if (!confirm('Reset all assignments and notes?')) return;
+  document.querySelectorAll('.card').forEach(card => {
+    card.setAttribute('data-owner', '');
+    card.classList.remove('assigned-hub','assigned-soc','assigned-shared','assigned-others');
+    card.querySelectorAll('.own-btn').forEach(b => b.classList.remove('selected-hub','selected-soc','selected-shared','selected-others'));
+    const notes = card.querySelector('.notes-field');
+    if (notes) { notes.value = ''; notes.classList.remove('visible'); }
+    const remarks = card.querySelector('.remarks-field');
+    if (remarks) { remarks.value = ''; remarks.classList.remove('visible'); }
+    const toggle = card.querySelector('.notes-toggle');
+    if (toggle) toggle.textContent = '+ notes';
+  });
+  updateAll();
+}
+
+function exportCSV(unassignedOnly = false) {
+  const groupLabels = {
+    people: 'People',
+    operations: 'Operations',
+    site: 'Site, Facilities & Utilities',
+    assets: 'Inventory & Assets',
+    trucking: 'Trucking & Line-Haul'
+  };
+  const ownerLabels = {
+    hub: 'RC OpEx',
+    soc: 'SOC OpEx',
+    shared: 'Shared / Joint',
+    others: 'Others',
+    '': 'Unassigned'
+  };
+
+  const rows = [['Section', 'Item', 'Owner', 'Remarks / Others', 'Notes', 'Custom Item']];
+
+  document.querySelectorAll('.card').forEach(card => {
+    const owner = card.getAttribute('data-owner') || '';
+    if (unassignedOnly && owner !== '') return;
+
+    const group = card.getAttribute('data-group') || '';
+    const isCustom = card.classList.contains('custom-card') ? 'Yes' : '';
+    const title = (card.querySelector('.card-title') || {}).textContent?.trim() || '';
+    const remarks = (card.querySelector('.remarks-field') || {}).value?.trim() || '';
+    const notes = (card.querySelector('.notes-field') || {}).value?.trim() || '';
+
+    rows.push([
+      groupLabels[group] || group,
+      title,
+      ownerLabels[owner] || owner,
+      remarks,
+      notes,
+      isCustom
+    ]);
+  });
+
+  const csv = rows.map(r => r.map(cell => `"${(cell || '').replace(/"/g, '""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = unassignedOnly ? 'dc-opex-unassigned.csv' : 'dc-opex-decisions.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// Live remarks update for summary
+document.addEventListener('input', e => {
+  if (e.target.classList.contains('remarks-field')) updateAll();
+});
+
+// Init
+updateAll();
+document.querySelector('.tab').setAttribute('data-filter', 'all');
+</script>
+</body>
+</html>
